@@ -1,0 +1,11 @@
+{
+    "name": "Identity",
+    "alias": "identity",
+    "description": "Identity & Access module - users, roles, permissions, sessions",
+    "keywords": [],
+    "priority": 1,
+    "providers": [
+        "Modules\\Identity\\Providers\\IdentityServiceProvider"
+    ],
+    "files": []
+}

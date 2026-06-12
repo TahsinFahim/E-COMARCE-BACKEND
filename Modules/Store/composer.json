@@ -1,0 +1,27 @@
+{
+    "name": "nwidart/store",
+    "description": "Store & Location module for ecommerce backend",
+    "authors": [
+        {
+            "name": "Ecommerce Team",
+            "email": "support@example.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": []
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Store\\": "app/",
+            "Modules\\Store\\Database\\Factories\\": "database/factories/",
+            "Modules\\Store\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\Store\\Tests\\": "tests/"
+        }
+    }
+}

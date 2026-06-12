@@ -1,0 +1,334 @@
+<div class="nav-tooltip" id="navTooltip"></div>
+
+<!-- ========== SIDEBAR ========== -->
+<aside id="sidebar" class="w-52 bg-white border-r border-gray-200 flex flex-col flex-shrink-0 z-30 overflow-hidden">
+
+    <!-- Logo -->
+    <div class="h-[60px] flex items-center justify-between px-3.5 border-b border-blue-300 flex-shrink-0">
+        <div class="flex items-center gap-2 overflow-hidden">
+            <!-- A icon circle matching Ecommerce -->
+            <div
+                class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center flex-shrink-0 shadow-sm">
+                <span class="text-white font-bold text-sm leading-none">A</span>
+            </div>
+            <span class="logo-text font-semibold text-gray-800 text-[20px] whitespace-nowrap">Ecommerce</span>
+        </div>
+
+
+    </div>
+
+    <!-- Search Box -->
+    <div id="searchBox" class="px-2.5 py-2.5 border-b border-gray-100 flex-shrink-0">
+        <div
+            class="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-lg px-3  focus-within:border-blue-400 focus-within:ring-1 focus-within:ring-blue-100 transition-all">
+            <i class="fas fa-search text-gray-400 text-xs flex-shrink-0"></i>
+            <input id="sidebarSearch" type="text" placeholder="Search menus..."
+                class="bg-transparent border-0 outline-none focus:outline-none focus:ring-0 text-[13px] text-gray-700 placeholder-gray-400 w-full" />
+            <button id="searchClear" class="hidden text-gray-300 hover:text-gray-500 transition-colors">
+                <i class="fas fa-times text-xs"></i>
+            </button>
+        </div>
+        <p id="searchEmptyMsg" class="hidden text-[11px] text-gray-400 mt-1.5 px-1">No matching items found</p>
+    </div>
+
+    <!-- Navigation -->
+    <nav id="sideNav" class="flex-1 overflow-y-auto overflow-x-hidden py-2.5 px-2">
+
+        <!-- Dashboard -->
+        <a href="{{ route('dashboard') }}"
+            class="nav-item flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-150 mb-0.5 
+    {{ request()->routeIs('dashboard') ? 'bg-[#1e3a8a] text-white active' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-800' }}"
+            data-label="Dashboard">
+            <i class="fas fa-th-large w-4 text-center flex-shrink-0 text-base"></i>
+            <span class="nav-label font-bold">Dashboard</span>
+        </a>
+
+        <!-- Identity & Access - Only for Super Admin and Admin -->
+        @if(auth()->check() && auth()->user()->hasAnyRole(['Super Admin', 'Admin']))
+        <div class="mb-0.5">
+            <button
+                class="nav-item has-sub w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-gray-500 hover:bg-gray-50 hover:text-gray-800 text-sm font-medium transition-colors duration-150"
+                data-label="Identity" data-sub="sub-identity">
+                <i class="fas fa-id-card w-4 text-center flex-shrink-0 text-base"></i>
+                <span class="nav-label flex-1 text-left">Identity & Access</span>
+                <i class="nav-chevron fas fa-chevron-down text-[10px] flex-shrink-0"></i>
+            </button>
+            <div class="submenu sub-indent" id="sub-identity">
+                <a href="{{ route('users.index') }}"
+                    class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('users.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                    <i class="fas fa-users w-3.5 text-center"></i><span>Users</span>
+                </a>
+                @if(auth()->user()->hasRole('Super Admin'))
+                <a href="{{ route('roles.index') }}"
+                    class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('roles.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                    <i class="fas fa-shield-halved w-3.5 text-center"></i><span>Roles</span>
+                </a>
+                <a href="{{ route('permissions.index') }}"
+                    class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('permissions.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                    <i class="fas fa-key w-3.5 text-center"></i><span>Permissions</span>
+                </a>
+                @endif
+            </div>
+        </div>
+        @endif
+
+        <!-- Catalog -->
+        <div class="mb-0.5">
+            <button
+                class="nav-item has-sub w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-gray-500 hover:bg-gray-50 hover:text-gray-800 text-sm font-medium transition-colors duration-150"
+                data-label="Catalog" data-sub="sub-cat">
+                <i class="fas fa-boxes w-4 text-center flex-shrink-0 text-base"></i>
+                <span class="nav-label flex-1 text-left">Catalog</span>
+                <i class="nav-chevron fas fa-chevron-down text-[10px] flex-shrink-0"></i>
+            </button>
+                <div class="submenu sub-indent" id="sub-cat">
+                    <a href="{{ route('products.index') }}"
+                        class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('products.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                        <i class="fas fa-box w-3.5 text-center"></i><span>Products</span>
+                    </a>
+                    <a href="{{ route('categories.index') }}"
+                        class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('categories.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                        <i class="fas fa-tags w-3.5 text-center"></i><span>Categories</span>
+                    </a>
+                    <a href="{{ route('brands.index') }}"
+                        class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('brands.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                        <i class="fas fa-star w-3.5 text-center"></i><span>Brands</span>
+                    </a>
+                </div>
+        </div>
+
+        <!-- Store & Location -->
+        <div class="mb-0.5">
+            <button
+                class="nav-item has-sub w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-gray-500 hover:bg-gray-50 hover:text-gray-800 text-sm font-medium transition-colors duration-150"
+                data-label="Store" data-sub="sub-store">
+                <i class="fas fa-store w-4 text-center flex-shrink-0 text-base"></i>
+                <span class="nav-label flex-1 text-left">Store & Location</span>
+                <i class="nav-chevron fas fa-chevron-down text-[10px] flex-shrink-0"></i>
+            </button>
+            <div class="submenu sub-indent" id="sub-store">
+                <a href="{{ route('stores.index') }}"
+                    class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('stores.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                    <i class="fas fa-store-alt w-3.5 text-center"></i><span>Stores</span>
+                </a>
+                <a href="{{ route('store-staff.index') }}"
+                    class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('store-staff.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                    <i class="fas fa-users w-3.5 text-center"></i><span>Staff</span>
+                </a>
+                <a href="{{ route('countries.index') }}"
+                    class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('countries.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                    <i class="fas fa-globe w-3.5 text-center"></i><span>Countries</span>
+                </a>
+                <a href="{{ route('addresses.index') }}"
+                    class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('addresses.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                    <i class="fas fa-address-book w-3.5 text-center"></i><span>Addresses</span>
+                </a>
+                <a href="{{ route('app-settings.index') }}"
+                    class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('app-settings.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                    <i class="fas fa-cogs w-3.5 text-center"></i><span>App Settings</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Inventory -->
+        <div class="mb-0.5">
+            <button
+                class="nav-item has-sub w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-gray-500 hover:bg-gray-50 hover:text-gray-800 text-sm font-medium transition-colors duration-150"
+                data-label="Inventory" data-sub="sub-inv">
+                <i class="fas fa-warehouse w-4 text-center flex-shrink-0 text-base"></i>
+                <span class="nav-label flex-1 text-left">Inventory</span>
+                <i class="nav-chevron fas fa-chevron-down text-[10px] flex-shrink-0"></i>
+            </button>
+            <div class="submenu sub-indent" id="sub-inv">
+                <a href="{{ route('inventory-stock.index') }}"
+                    class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('inventory-stock.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                    <i class="fas fa-boxes w-3.5 text-center"></i><span>Stock</span>
+                </a>
+                <a href="{{ route('inventory-locations.index') }}"
+                    class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('inventory-locations.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                    <i class="fas fa-map-marker-alt w-3.5 text-center"></i><span>Locations</span>
+                </a>
+                <a href="{{ route('inventory-movements.index') }}"
+                    class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('inventory-movements.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                    <i class="fas fa-exchange-alt w-3.5 text-center"></i><span>Movements</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Cart & Wishlist -->
+        <div class="mb-0.5">
+            <button
+                class="nav-item has-sub w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-gray-500 hover:bg-gray-50 hover:text-gray-800 text-sm font-medium transition-colors duration-150"
+                data-label="Cart" data-sub="sub-cart">
+                <i class="fas fa-shopping-cart w-4 text-center flex-shrink-0 text-base"></i>
+                <span class="nav-label flex-1 text-left">Cart & Wishlist</span>
+                <i class="nav-chevron fas fa-chevron-down text-[10px] flex-shrink-0"></i>
+            </button>
+            <div class="submenu sub-indent" id="sub-cart">
+                <a href="{{ route('cart.index') }}"
+                    class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('cart.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                    <i class="fas fa-shopping-cart w-3.5 text-center"></i><span>Carts</span>
+                </a>
+                <a href="{{ route('coupons.index') }}"
+                    class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('coupons.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                    <i class="fas fa-ticket-alt w-3.5 text-center"></i><span>Coupons</span>
+                </a>
+                <a href="{{ route('wishlists.index') }}"
+                    class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('wishlists.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                    <i class="fas fa-heart w-3.5 text-center"></i><span>Wishlists</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Purchases -->
+        <div class="mb-0.5">
+            <button
+                class="nav-item has-sub w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-gray-500 hover:bg-gray-50 hover:text-gray-800 text-sm font-medium transition-colors duration-150"
+                data-label="Purchases" data-sub="sub-purchases">
+                <i class="fas fa-file-invoice w-4 text-center flex-shrink-0 text-base"></i>
+                <span class="nav-label flex-1 text-left">Purchases</span>
+                <i class="nav-chevron fas fa-chevron-down text-[10px] flex-shrink-0"></i>
+            </button>
+            <div class="submenu sub-indent" id="sub-purchases">
+                <a href="{{ route('suppliers.index') }}"
+                    class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('suppliers.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                    <i class="fas fa-truck w-3.5 text-center"></i><span>Suppliers</span>
+                </a>
+                <a href="{{ route('purchase-orders.index') }}"
+                    class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('purchase-orders.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                    <i class="fas fa-file-invoice w-3.5 text-center"></i><span>Purchase Orders</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Orders -->
+        <div class="mb-0.5">
+            <button
+                class="nav-item has-sub w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-gray-500 hover:bg-gray-50 hover:text-gray-800 text-sm font-medium transition-colors duration-150"
+                data-label="Orders" data-sub="sub-orders">
+                <i class="fas fa-shopping-cart w-4 text-center flex-shrink-0 text-base"></i>
+                <span class="nav-label flex-1 text-left">Orders</span>
+                <i class="nav-chevron fas fa-chevron-down text-[10px] flex-shrink-0"></i>
+            </button>
+            <div class="submenu sub-indent" id="sub-orders">
+                <a href="{{ route('orders.index') }}"
+                    class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('orders.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                    <i class="fas fa-receipt w-3.5 text-center"></i><span>Orders</span>
+                </a>
+                <a href="{{ route('payments.index') }}"
+                    class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('payments.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                    <i class="fas fa-credit-card w-3.5 text-center"></i><span>Payments</span>
+                </a>
+                <a href="{{ route('refunds.index') }}"
+                    class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('refunds.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                    <i class="fas fa-undo-alt w-3.5 text-center"></i><span>Refunds</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Delivery -->
+        <div class="mb-0.5">
+            <button
+                class="nav-item has-sub w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-gray-500 hover:bg-gray-50 hover:text-gray-800 text-sm font-medium transition-colors duration-150"
+                data-label="Delivery" data-sub="sub-delivery">
+                <i class="fas fa-shipping-fast w-4 text-center flex-shrink-0 text-base"></i>
+                <span class="nav-label flex-1 text-left">Delivery</span>
+                <i class="nav-chevron fas fa-chevron-down text-[10px] flex-shrink-0"></i>
+            </button>
+            <div class="submenu sub-indent" id="sub-delivery">
+                <a href="{{ route('shipments.index') }}"
+                    class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('shipments.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                    <i class="fas fa-truck w-3.5 text-center"></i><span>Shipments</span>
+                </a>
+                <a href="{{ route('shipment-events.index') }}"
+                    class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('shipment-events.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                    <i class="fas fa-timeline w-3.5 text-center"></i><span>Events</span>
+                </a>
+                <a href="{{ route('delivery-drivers.index') }}"
+                    class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('delivery-drivers.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                    <i class="fas fa-user-tie w-3.5 text-center"></i><span>Drivers</span>
+                </a>
+                <a href="{{ route('delivery-zones.index') }}"
+                    class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('delivery-zones.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                    <i class="fas fa-map-location-dot w-3.5 text-center"></i><span>Zones</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- POS -->
+        <div class="mb-0.5">
+            <button
+                class="nav-item has-sub w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-gray-500 hover:bg-gray-50 hover:text-gray-800 text-sm font-medium transition-colors duration-150"
+                data-label="POS" data-sub="sub-pos">
+                <i class="fas fa-cash-register w-4 text-center flex-shrink-0 text-base"></i>
+                <span class="nav-label flex-1 text-left">POS</span>
+                <i class="nav-chevron fas fa-chevron-down text-[10px] flex-shrink-0"></i>
+            </button>
+            <div class="submenu sub-indent" id="sub-pos">
+                <a href="{{ route('pos-registers.index') }}"
+                    class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('pos-registers.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                    <i class="fas fa-desktop w-3.5 text-center"></i><span>Registers</span>
+                </a>
+                <a href="{{ route('pos-shifts.index') }}"
+                    class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('pos-shifts.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                    <i class="fas fa-clock w-3.5 text-center"></i><span>Shifts</span>
+                </a>
+                <a href="{{ route('pos-sales.index') }}"
+                    class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('pos-sales.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                    <i class="fas fa-receipt w-3.5 text-center"></i><span>Sales</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Reviews & Notifications -->
+        <div class="mb-0.5">
+            <button
+                class="nav-item has-sub w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-gray-500 hover:bg-gray-50 hover:text-gray-800 text-sm font-medium transition-colors duration-150"
+                data-label="Reviews" data-sub="sub-reviews">
+                <i class="fas fa-star w-4 text-center flex-shrink-0 text-base"></i>
+                <span class="nav-label flex-1 text-left">Reviews & Notif.</span>
+                <i class="nav-chevron fas fa-chevron-down text-[10px] flex-shrink-0"></i>
+            </button>
+            <div class="submenu sub-indent" id="sub-reviews">
+                <a href="{{ route('product-reviews.index') }}"
+                    class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('product-reviews.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                    <i class="fas fa-star-half-stroke w-3.5 text-center"></i><span>Product Reviews</span>
+                </a>
+                <a href="{{ route('notifications.index') }}"
+                    class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('notifications.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                    <i class="fas fa-bell w-3.5 text-center"></i><span>Notifications</span>
+                </a>
+                <a href="{{ route('audit-logs.index') }}"
+                    class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('audit-logs.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                    <i class="fas fa-history w-3.5 text-center"></i><span>Audit Logs</span>
+                </a>
+                <a href="{{ route('webhooks.index') }}"
+                    class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('webhooks.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                    <i class="fas fa-plug w-3.5 text-center"></i><span>Webhooks</span>
+                </a>
+                <a href="{{ route('webhook-deliveries.index') }}"
+                    class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('webhook-deliveries.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                    <i class="fas fa-paper-plane w-3.5 text-center"></i><span>Webhook Deliv.</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Reports -->
+        <a href="#"
+            class="nav-item flex items-center gap-2.5 px-3 py-2 rounded-lg text-gray-500 hover:bg-gray-50 hover:text-gray-800 text-sm font-medium transition-colors duration-150 mb-0.5"
+            data-label="Reports">
+            <i class="fas fa-chart-line w-4 text-center flex-shrink-0 text-base"></i>
+            <span class="nav-label">Reports</span>
+        </a>
+
+        <!-- Settings -->
+        <a href="#"
+            class="nav-item flex items-center gap-2.5 px-3 py-2 rounded-lg text-gray-500 hover:bg-gray-50 hover:text-gray-800 text-sm font-medium transition-colors duration-150 mb-0.5"
+            data-label="Settings">
+            <i class="fas fa-cog w-4 text-center flex-shrink-0 text-base"></i>
+            <span class="nav-label">Settings</span>
+        </a>
+
+    </nav>
+</aside>
+

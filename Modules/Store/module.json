@@ -1,0 +1,11 @@
+{
+    "name": "Store",
+    "alias": "store",
+    "description": "Store & Location module - stores, staff, countries, addresses, app settings",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Store\\Providers\\StoreServiceProvider"
+    ],
+    "files": []
+}

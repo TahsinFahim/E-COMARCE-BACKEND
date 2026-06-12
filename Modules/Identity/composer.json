@@ -1,0 +1,27 @@
+{
+    "name": "nwidart/identity",
+    "description": "Identity & Access module for ecommerce backend - users, roles, permissions",
+    "authors": [
+        {
+            "name": "Ecommerce Team",
+            "email": "support@example.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": []
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Identity\\": "app/",
+            "Modules\\Identity\\Database\\Factories\\": "database/factories/",
+            "Modules\\Identity\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\Identity\\Tests\\": "tests/"
+        }
+    }
+}

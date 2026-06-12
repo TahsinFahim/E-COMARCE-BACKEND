@@ -1,0 +1,11 @@
+{
+    "name": "Reviews",
+    "alias": "reviews",
+    "description": "Reviews & Notifications module - product reviews, notifications, audit logs, webhooks",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Reviews\\Providers\\ReviewsServiceProvider"
+    ],
+    "files": []
+}

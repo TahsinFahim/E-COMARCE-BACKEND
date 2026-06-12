@@ -1,0 +1,22 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+use Modules\Pos\Http\Controllers\PosRegisterController;
+use Modules\Pos\Http\Controllers\PosShiftController;
+use Modules\Pos\Http\Controllers\PosSaleController;
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    // POS Registers
+    Route::resource('pos-registers', PosRegisterController::class)->except(['create', 'edit'])->names('pos-registers');
+    Route::get('/dataTable/pos-registers', [PosRegisterController::class, 'dataTable'])->name('pos-registers.dataTable');
+
+    // POS Shifts
+    Route::resource('pos-shifts', PosShiftController::class)->except(['create', 'edit'])->names('pos-shifts');
+    Route::get('/dataTable/pos-shifts', [PosShiftController::class, 'dataTable'])->name('pos-shifts.dataTable');
+    Route::post('/pos-shifts/{id}/close', [PosShiftController::class, 'closeShift'])->name('pos-shifts.close');
+
+    // POS Sales
+    Route::resource('pos-sales', PosSaleController::class)->except(['create', 'edit'])->names('pos-sales');
+    Route::get('/dataTable/pos-sales', [PosSaleController::class, 'dataTable'])->name('pos-sales.dataTable');
+    Route::post('/pos-sales/{id}/void', [PosSaleController::class, 'voidSale'])->name('pos-sales.void');
+});

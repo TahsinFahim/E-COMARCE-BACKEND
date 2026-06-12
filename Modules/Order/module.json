@@ -1,0 +1,11 @@
+{
+    "name": "Order",
+    "alias": "order",
+    "description": "Orders, payments, and refunds management module",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Order\\Providers\\OrderServiceProvider"
+    ],
+    "files": []
+}

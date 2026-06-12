@@ -1,0 +1,27 @@
+{
+    "name": "nwidart/catalog",
+    "description": "Catalog module for ecommerce backend",
+    "authors": [
+        {
+            "name": "Ecommerce Team",
+            "email": "support@example.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": []
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Catalog\\": "app/",
+            "Modules\\Catalog\\Database\\Factories\\": "database/factories/",
+            "Modules\\Catalog\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\Catalog\\Tests\\": "tests/"
+        }
+    }
+}

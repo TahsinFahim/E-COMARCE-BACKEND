@@ -1,0 +1,11 @@
+{
+    "name": "Pos",
+    "alias": "pos",
+    "description": "Point of Sale module - registers, shifts, and sales tracking",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Pos\\Providers\\PosServiceProvider"
+    ],
+    "files": []
+}

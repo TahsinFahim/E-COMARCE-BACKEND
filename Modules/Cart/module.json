@@ -1,0 +1,11 @@
+{
+    "name": "Cart",
+    "alias": "cart",
+    "description": "Cart, wishlist, coupons module",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Cart\\Providers\\CartServiceProvider"
+    ],
+    "files": []
+}
