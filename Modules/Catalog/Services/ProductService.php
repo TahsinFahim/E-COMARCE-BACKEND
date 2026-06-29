@@ -12,6 +12,8 @@ use Modules\Catalog\Models\Product;
 use Modules\Catalog\Models\Brand;
 use Modules\Catalog\Models\Category;
 use Modules\Catalog\Models\ProductImage;
+use Modules\Catalog\Models\ProductVariant;
+use Modules\Catalog\Models\VariantOption;
 use Yajra\DataTables\DataTables;
 
 class ProductService
@@ -64,6 +66,53 @@ class ProductService
 
     public function saveProduct(array $data): array
     {
+        // Validate SKU uniqueness across all variants (create + update)
+        if (isset($data['variants']) && is_array($data['variants'])) {
+            $allSkus = [];
+            foreach ($data['variants'] as $index => $variantData) {
+                $sku = trim($variantData['sku'] ?? '');
+                if (empty($sku)) continue;
+
+                // Check for duplicate SKUs within the same request
+                if (in_array($sku, $allSkus)) {
+                    return [
+                        'status' => 'error',
+                        'message' => "Duplicate SKU '{$sku}' found at variant #" . ($index + 1) . '. Each variant must have a unique SKU.',
+                    ];
+                }
+                $allSkus[] = $sku;
+            }
+
+            // Check for duplicate SKUs against existing DB records
+            // Exclude ALL existing variants of THIS product so they can keep their SKUs unchanged
+            $productId = $data['product_id'] ?? null;
+            $existingVariantIds = [];
+            if ($productId) {
+                $product = \Modules\Catalog\Models\Product::find($productId);
+                if ($product) {
+                    $existingVariantIds = $product->variants()->pluck('id')->toArray();
+                }
+            }
+
+            foreach ($data['variants'] as $index => $variantData) {
+                $sku = trim($variantData['sku'] ?? '');
+                if (empty($sku)) continue;
+
+                // Exclude ALL existing variants of this product from the check
+                // so that unchanged variants don't trigger false conflicts
+                $conflict = \Modules\Catalog\Models\ProductVariant::where('sku', $sku)
+                    ->whereNotIn('id', $existingVariantIds)
+                    ->exists();
+
+                if ($conflict) {
+                    return [
+                        'status' => 'error',
+                        'message' => "SKU '{$sku}' at variant #" . ($index + 1) . ' already exists in the database.',
+                    ];
+                }
+            }
+        }
+
         try {
             return DB::transaction(function () use ($data) {
                 $productId = $data['product_id'] ?? null;
@@ -109,11 +158,35 @@ class ProductService
                         $variantData['track_inventory'] = $variantData['track_inventory'] ?? false;
                         $variantData['allow_backorder'] = $variantData['allow_backorder'] ?? false;
                         
+                        // Extract options before saving variant
+                        $optionsData = $variantData['options'] ?? [];
+                        unset($variantData['options']);
+                        
                         $variant = $product->variants()->updateOrCreate(
                             ['id' => $variantData['id'] ?? null], 
                             $variantData
                         );
                         $keepVariantIds[] = $variant->id;
+
+                        // Handle variant_options (color variants for this size)
+                        if (!empty($optionsData) && is_array($optionsData)) {
+                            $keepOptionIds = [];
+                            foreach ($optionsData as $optData) {
+                                $optData['product_variant_id'] = $variant->id;
+                                $optData['status'] = $optData['status'] ?? 'active';
+                                $optData['sort_order'] = $optData['sort_order'] ?? 0;
+                                $optData['stock'] = $optData['stock'] ?? 0;
+                                $optData['price_adjustment'] = $optData['price_adjustment'] ?? 0;
+                                
+                                $option = VariantOption::updateOrCreate(
+                                    ['id' => $optData['id'] ?? null],
+                                    $optData
+                                );
+                                $keepOptionIds[] = $option->id;
+                            }
+                            // Delete options that were removed
+                            $variant->options()->whereNotIn('id', $keepOptionIds)->delete();
+                        }
                     }
 
                     // Delete variants that were removed from the UI and not explicitly tracked
@@ -140,7 +213,7 @@ class ProductService
     public function getProductById(int $id): array
     {
         try {
-            $product = Product::with(['brand', 'categories', 'variants', 'images'])->findOrFail($id);
+            $product = Product::with(['brand', 'categories', 'variants.options', 'images'])->findOrFail($id);
             return [
                 'status' => 'success',
                 'product' => $product,
@@ -184,6 +257,56 @@ class ProductService
         return Category::where('status', 'active')->orderBy('name')->get();
     }
 
+    public function searchProducts(string $query, ?int $categoryId = null): array
+    {
+        try {
+            $queryBuilder = Product::with(['brand', 'categories', 'images'])
+                ->where('status', 'active')
+                ->where('visibility', 'visible')
+                ->where(function ($q) use ($query) {
+                    $q->where('name', 'LIKE', "%{$query}%")
+                        ->orWhere('short_description', 'LIKE', "%{$query}%")
+                        ->orWhere('description', 'LIKE', "%{$query}%");
+                });
+
+            if ($categoryId && $categoryId > 0) {
+                $queryBuilder->whereHas('categories', function ($q) use ($categoryId) {
+                    $q->where('categories.id', $categoryId);
+                });
+            }
+
+            $products = $queryBuilder->limit(20)->get();
+
+            $formattedProducts = $products->map(function ($product) {
+                $mainImage = $product->images->where('is_main', true)->first();
+                $thumbnail = $mainImage ? asset('storage/' . $mainImage->image_url) : null;
+                $category = $product->categories->first()?->name;
+
+                return [
+                    'id' => $product->id,
+                    'name' => $product->name,
+                    'slug' => $product->slug,
+                    'price' => (float) $product->variants->min('price') ?? 0,
+                    'sale_price' => $product->variants->min('sale_price') ?? null,
+                    'thumbnail' => $thumbnail,
+                    'category' => $category,
+                ];
+            })->toArray();
+
+            return [
+                'status' => 'success',
+                'message' => 'Products found',
+                'data' => $formattedProducts,
+            ];
+        } catch (\Exception $e) {
+            return [
+                'status' => 'error',
+                'message' => 'Error searching products: ' . $e->getMessage(),
+                'data' => [],
+            ];
+        }
+    }
+
     private function saveProductImages(Product $product, array $images): void
     {
         foreach ($images as $index => $image) {
@@ -196,7 +319,7 @@ class ProductService
 
                 ProductImage::create([
                     'product_id' => $product->id,
-                    'image_url' => '/storage/' . $path,
+                    'image_url' => $path,
                     'alt_text' => $product->name,
                     'sort_order' => ProductImage::where('product_id', $product->id)->max('sort_order') + 1,
                     'is_main' => $isMain,
@@ -233,12 +356,19 @@ class ProductService
             return;
         }
 
+        // Handle URL-based paths (from seeders / legacy data)
         $path = parse_url($imageUrl, PHP_URL_PATH) ?: $imageUrl;
 
-        if (!str_starts_with($path, '/storage/')) {
+        // Strip leading /storage/ if present (legacy format)
+        if (str_starts_with($path, '/storage/')) {
+            $path = substr($path, strlen('/storage/'));
+        }
+
+        // Only delete if it's an uploaded file (no external URLs like https://via.placeholder.com)
+        if (!str_starts_with($path, 'products/') && !str_starts_with($path, 'categories/')) {
             return;
         }
 
-        Storage::disk('public')->delete(substr($path, strlen('/storage/')));
+        Storage::disk('public')->delete($path);
     }
 }

@@ -13,7 +13,7 @@ class Category extends Model
 
     protected $table = 'categories';
 
-    protected $fillable = ['parent_id', 'name', 'slug', 'description', 'image_url', 'sort_order', 'status'];
+    protected $fillable = ['parent_id', 'name', 'slug', 'image', 'description', 'image_url', 'sort_order', 'status'];
 
     public function parent()
     {

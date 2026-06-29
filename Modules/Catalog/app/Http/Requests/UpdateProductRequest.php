@@ -18,8 +18,13 @@ class UpdateProductRequest extends FormRequest
 
         return [
             'brand_id' => 'nullable|integer|exists:brands,id',
+            'unit_id' => 'nullable|integer|exists:units,id',
+            'size_id' => 'nullable|integer|exists:sizes,id',
+            'tax_rate_id' => 'nullable|integer|exists:tax_rates,id',
             'category_ids' => 'nullable|array',
             'category_ids.*' => 'integer|exists:categories,id',
+            'navbar_item_id' => 'nullable|integer|exists:navbar_items,id',
+            'subnavbar_item_id' => 'nullable|integer|exists:subnavbar_items,id',
             'name' => 'required|string|max:220',
             'slug' => [
                 'required',
@@ -51,6 +56,13 @@ class UpdateProductRequest extends FormRequest
             'variants.*.track_inventory' => 'nullable|boolean',
             'variants.*.allow_backorder' => 'nullable|boolean',
             'variants.*.attributes' => 'nullable|array',
+            'variants.*.options' => 'nullable|array',
+            'variants.*.options.*.id' => 'nullable|integer',
+            'variants.*.options.*.color_name' => 'nullable|string|max:100',
+            'variants.*.options.*.color_code' => 'nullable|string|max:20',
+            'variants.*.options.*.price_adjustment' => 'nullable|numeric',
+            'variants.*.options.*.stock' => 'nullable|integer|min:0',
+            'variants.*.options.*.sort_order' => 'nullable|integer|min:0',
         ];
     }
 

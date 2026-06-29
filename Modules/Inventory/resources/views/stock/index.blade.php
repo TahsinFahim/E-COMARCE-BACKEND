@@ -3,10 +3,12 @@
         id="inventory-stock"
         title="Inventory Stock"
         icon="fa-solid fa-boxes"
-        :columns="['Location','Store','Qty On Hand','Qty Reserved','Available','Reorder Point','Low Stock','Last Updated','Action']"
+        :columns="['Location','Store','Product','Variant','Qty On Hand','Qty Reserved','Available','Reorder Point','Low Stock','Last Updated','Action']"
         :dtColumns="[
             ['data' => 'location_name'],
             ['data' => 'store_name'],
+            ['data' => 'product_name'],
+            ['data' => 'variant_name'],
             ['data' => 'quantity_on_hand'],
             ['data' => 'quantity_reserved'],
             ['data' => 'available_quantity'],
@@ -26,11 +28,19 @@
         :order="[[7, 'desc']]"
     >
         <div class="mb-4">
+            <x-form-select label="Variant" name="variant_id" id="stock_variant_id">
+                <option value="" disabled selected>Select a variant</option>
+                @foreach($variants ?? [] as $variant)
+                    <option value="{{ $variant->id }}">{{ $variant->product?->name ?? 'Unknown Product' }} - {{ $variant->name }} ({{ $variant->sku }})</option>
+                @endforeach
+            </x-form-select>
+        </div>
+        <div class="mb-4">
             <x-form-select label="Location" name="location_id" id="stock_location_id">
+                <option value="" disabled selected>Select a location</option>
                 @foreach($locations ?? [] as $location)
                     <option value="{{ $location['id'] }}">{{ $location['name'] }} ({{ $location['store']['name'] ?? '' }})</option>
                 @endforeach
-                <option value="" disabled selected>Select a location</option>
             </x-form-select>
         </div>
         <div class="mb-4">
@@ -47,6 +57,7 @@
     @push('scripts')
     <script>
         window.fillInventoryStockForm = function(data) {
+            $('#stock_variant_id').val(data.variant_id);
             $('#stock_location_id').val(data.location_id);
             $('#stock_quantity_on_hand').val(data.quantity_on_hand);
             $('#stock_quantity_reserved').val(data.quantity_reserved);

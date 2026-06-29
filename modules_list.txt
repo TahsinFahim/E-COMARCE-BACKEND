@@ -1,0 +1,10 @@
+Cart
+Catalog
+Frontend
+Identity
+Inventory
+Order
+Pos
+Reviews
+Shipping
+Store

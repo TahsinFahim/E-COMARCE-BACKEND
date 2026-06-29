@@ -25,4 +25,9 @@ class InventoryStock extends Model
     {
         return $this->belongsTo(InventoryLocation::class, 'location_id');
     }
+
+    public function variant()
+    {
+        return $this->belongsTo(\Modules\Catalog\Models\ProductVariant::class, 'variant_id');
+    }
 }

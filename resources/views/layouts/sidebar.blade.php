@@ -94,6 +94,22 @@
                         class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('brands.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
                         <i class="fas fa-star w-3.5 text-center"></i><span>Brands</span>
                     </a>
+                    <a href="{{ route('units.index') }}"
+                        class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('units.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                        <i class="fas fa-ruler-combined w-3.5 text-center"></i><span>Units</span>
+                    </a>
+                    <a href="{{ route('sizes.index') }}"
+                        class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('sizes.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                        <i class="fas fa-ruler w-3.5 text-center"></i><span>Sizes</span>
+                    </a>
+                    <a href="{{ route('barcode-print.index') }}"
+                        class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('barcode-print.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                        <i class="fas fa-qrcode w-3.5 text-center"></i><span>Barcode Print</span>
+                    </a>
+                    <a href="{{ route('tax-rates.index') }}"
+                        class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('tax-rates.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                        <i class="fas fa-percent w-3.5 text-center"></i><span>Tax Rates</span>
+                    </a>
                 </div>
         </div>
 
@@ -198,6 +214,10 @@
                     class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('purchase-orders.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
                     <i class="fas fa-file-invoice w-3.5 text-center"></i><span>Purchase Orders</span>
                 </a>
+                <a href="{{ route('purchase-returns.index') }}"
+                    class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('purchase-returns.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                    <i class="fas fa-undo-alt w-3.5 text-center"></i><span>Purchase Returns</span>
+                </a>
             </div>
         </div>
 
@@ -273,6 +293,10 @@
                     class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('pos-shifts.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
                     <i class="fas fa-clock w-3.5 text-center"></i><span>Shifts</span>
                 </a>
+                <a href="{{ route('pos.sell.index') }}"
+                    class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('pos.sell.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                    <i class="fas fa-cash-register w-3.5 text-center"></i><span>New Sale</span>
+                </a>
                 <a href="{{ route('pos-sales.index') }}"
                     class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('pos-sales.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
                     <i class="fas fa-receipt w-3.5 text-center"></i><span>Sales</span>
@@ -309,6 +333,63 @@
                 <a href="{{ route('webhook-deliveries.index') }}"
                     class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('webhook-deliveries.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
                     <i class="fas fa-paper-plane w-3.5 text-center"></i><span>Webhook Deliv.</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Frontend -->
+        <div class="mb-0.5">
+            <button
+                class="nav-item has-sub w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-gray-500 hover:bg-gray-50 hover:text-gray-800 text-sm font-medium transition-colors duration-150"
+                data-label="Frontend" data-sub="sub-frontend">
+                <i class="fas fa-paint-brush w-4 text-center flex-shrink-0 text-base"></i>
+                <span class="nav-label flex-1 text-left">Frontend</span>
+                <i class="nav-chevron fas fa-chevron-down text-[10px] flex-shrink-0"></i>
+            </button>
+            <div class="submenu sub-indent" id="sub-frontend">
+                <a href="{{ route('frontend.banners.index') }}"
+                    class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('frontend.banners.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                    <i class="fas fa-images w-3.5 text-center"></i><span>Banners</span>
+                </a>
+                <a href="#"
+                    class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('frontend.sliders.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                    <i class="fas fa-sliders-h w-3.5 text-center"></i><span>Sliders</span>
+                </a>
+                <a href="{{ route('frontend.nav-items.index') }}"
+                    class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('frontend.nav-items.index') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                    <i class="fas fa-bars w-3.5 text-center"></i><span>Navbar Items</span>
+                </a>
+                <a href="{{ route('frontend.announcement-bars.index') }}"
+                    class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('frontend.announcement-bars.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                    <i class="fas fa-rectangle-ad w-3.5 text-center"></i><span>Announcement Bars</span>
+                </a>
+                <a href="{{ route('frontend.site-settings.index') }}"
+                    class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('frontend.site-settings.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                    <i class="fas fa-cog w-3.5 text-center"></i><span>Site Settings</span>
+                </a>
+                <a href="{{ route('frontend.ctas.index') }}"
+                    class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('frontend.ctas.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                    <i class="fas fa-bullhorn w-3.5 text-center"></i><span>Homepage CTAs</span>
+                </a>
+                <a href="{{ route('frontend.nav-items.subnavbar.index') }}"
+                    class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('frontend.nav-items.subnavbar.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                    <i class="fas fa-list w-3.5 text-center"></i><span>Subnavbar Items</span>
+                </a>
+                <a href="#"
+                    class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('frontend.pages.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                    <i class="fas fa-file w-3.5 text-center"></i><span>Pages</span>
+                </a>
+                <a href="#"
+                    class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('frontend.testimonials.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                    <i class="fas fa-comment-dots w-3.5 text-center"></i><span>Testimonials</span>
+                </a>
+                <a href="#"
+                    class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('frontend.faqs.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                    <i class="fas fa-question-circle w-3.5 text-center"></i><span>FAQs</span>
+                </a>
+                <a href="#"
+                    class="flex items-center gap-2.5 pl-9 pr-3 py-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 text-[13px] transition-colors {{ request()->routeIs('frontend.footers.*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                    <i class="fas fa-shoe-prints w-3.5 text-center"></i><span>Footer</span>
                 </a>
             </div>
         </div>

@@ -15,5 +15,7 @@
     "Shipping": true,
     "Order": true,
     "Pos": true,
-    "Reviews": true
+    "Reviews": true,
+    "Frontend": true,
+    "Settings": true
 }

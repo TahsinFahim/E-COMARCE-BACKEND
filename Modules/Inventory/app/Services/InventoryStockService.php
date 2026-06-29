@@ -13,7 +13,7 @@ class InventoryStockService
     public function getStockDataTable(Request $request)
     {
         $query = InventoryStock::query()
-            ->with(['location.store'])
+            ->with(['location.store', 'variant.product'])
             ->orderByDesc('updated_at');
 
         return DataTables::of($query)
@@ -22,6 +22,12 @@ class InventoryStockService
             })
             ->addColumn('store_name', function (InventoryStock $stock) {
                 return $stock->location && $stock->location->store ? $stock->location->store->name : '-';
+            })
+            ->addColumn('product_name', function (InventoryStock $stock) {
+                return $stock->variant?->product?->name ?? '-';
+            })
+            ->addColumn('variant_name', function (InventoryStock $stock) {
+                return $stock->variant?->name ?? '-';
             })
             ->addColumn('available_quantity', function (InventoryStock $stock) {
                 return $stock->quantity_on_hand - $stock->quantity_reserved;

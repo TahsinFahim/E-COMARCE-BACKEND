@@ -6,6 +6,7 @@ use Modules\Inventory\Http\Controllers\InventoryStockController;
 use Modules\Inventory\Http\Controllers\InventoryMovementController;
 use Modules\Inventory\Http\Controllers\SupplierController;
 use Modules\Inventory\Http\Controllers\PurchaseOrderController;
+use Modules\Inventory\Http\Controllers\PurchaseReturnController;
 
 Route::middleware(['auth', 'verified'])->group(function () {
     // Inventory Locations
@@ -29,4 +30,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dataTable/purchase-orders', [PurchaseOrderController::class, 'dataTable'])->name('purchase-orders.dataTable');
     Route::post('purchase-orders/{id}/update-status', [PurchaseOrderController::class, 'updateStatus'])->name('purchase-orders.update-status');
     Route::get('/purchase-orders-search-products', [PurchaseOrderController::class, 'searchProducts'])->name('purchase-orders.search-products');
+
+    // Purchase Returns
+    Route::resource('purchase-returns', PurchaseReturnController::class)->names('purchase-returns');
+    Route::get('/dataTable/purchase-returns', [PurchaseReturnController::class, 'dataTable'])->name('purchase-returns.dataTable');
 });

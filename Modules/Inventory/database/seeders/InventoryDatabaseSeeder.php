@@ -157,28 +157,31 @@ class InventoryDatabaseSeeder extends Seeder
 
         if ($adminUser && $variants->isNotEmpty() && !empty($createdSuppliers[0])) {
             // PO 1 - Received
-            $po1 = PurchaseOrder::create([
-                'po_number' => 'PO-2026-0001',
-                'supplier_id' => $createdSuppliers[0]->id,
-                'store_id' => $mainStore->id,
-                'status' => 'received',
-                'total_amount' => 5000.00,
-                'shipping_cost' => 200.00,
-                'tax_amount' => 0,
-                'discount_amount' => 0,
-                'payment_status' => 'paid',
-                'order_date' => now()->subDays(30),
-                'expected_delivery_date' => now()->subDays(15),
-                'received_date' => now()->subDays(16),
-                'notes' => 'Initial electronics stock',
-                'created_by' => $adminUser->id,
-            ]);
+            $po1 = PurchaseOrder::firstOrCreate(
+                ['po_number' => 'PO-2026-0001'],
+                [
+                    'supplier_id' => $createdSuppliers[0]->id,
+                    'store_id' => $mainStore->id,
+                    'status' => 'received',
+                    'total_amount' => 5000.00,
+                    'shipping_cost' => 200.00,
+                    'tax_amount' => 0,
+                    'discount_amount' => 0,
+                    'payment_status' => 'paid',
+                    'order_date' => now()->subDays(30),
+                    'expected_delivery_date' => now()->subDays(15),
+                    'received_date' => now()->subDays(16),
+                    'notes' => 'Initial electronics stock',
+                    'created_by' => $adminUser->id,
+                ]
+            );
 
             $variant1 = $variants->first();
             if ($variant1) {
-                PurchaseOrderItem::create([
+                PurchaseOrderItem::firstOrCreate([
                     'purchase_order_id' => $po1->id,
                     'variant_id' => $variant1->id,
+                ],[
                     'quantity' => 100,
                     'received_quantity' => 100,
                     'unit_cost' => 50.00,
@@ -190,28 +193,31 @@ class InventoryDatabaseSeeder extends Seeder
             }
 
             // PO 2 - Ordered (pending delivery)
-            $po2 = PurchaseOrder::create([
-                'po_number' => 'PO-2026-0002',
-                'supplier_id' => $createdSuppliers[1]->id,
-                'store_id' => $mainStore->id,
-                'status' => 'ordered',
-                'total_amount' => 3500.00,
-                'shipping_cost' => 150.00,
-                'tax_amount' => 0,
-                'discount_amount' => 0,
-                'payment_status' => 'unpaid',
-                'order_date' => now()->subDays(5),
-                'expected_delivery_date' => now()->addDays(10),
-                'received_date' => null,
-                'notes' => 'Fashion items restocking',
-                'created_by' => $adminUser->id,
-            ]);
+            $po2 = PurchaseOrder::firstOrCreate(
+                ['po_number' => 'PO-2026-0002'],
+                [
+                    'supplier_id' => $createdSuppliers[1]->id,
+                    'store_id' => $mainStore->id,
+                    'status' => 'ordered',
+                    'total_amount' => 3500.00,
+                    'shipping_cost' => 150.00,
+                    'tax_amount' => 0,
+                    'discount_amount' => 0,
+                    'payment_status' => 'unpaid',
+                    'order_date' => now()->subDays(5),
+                    'expected_delivery_date' => now()->addDays(10),
+                    'received_date' => null,
+                    'notes' => 'Fashion items restocking',
+                    'created_by' => $adminUser->id,
+                ]
+            );
 
             if ($variants->count() > 1) {
                 $variant2 = $variants[1];
-                PurchaseOrderItem::create([
+                PurchaseOrderItem::firstOrCreate([
                     'purchase_order_id' => $po2->id,
                     'variant_id' => $variant2->id,
+                ],[
                     'quantity' => 50,
                     'received_quantity' => 0,
                     'unit_cost' => 70.00,
@@ -223,28 +229,31 @@ class InventoryDatabaseSeeder extends Seeder
             }
 
             // PO 3 - Draft
-            $po3 = PurchaseOrder::create([
-                'po_number' => 'PO-2026-0003',
-                'supplier_id' => $createdSuppliers[2]->id,
-                'store_id' => $mainStore->id,
-                'status' => 'draft',
-                'total_amount' => 0,
-                'shipping_cost' => 0,
-                'tax_amount' => 0,
-                'discount_amount' => 0,
-                'payment_status' => 'unpaid',
-                'order_date' => now(),
-                'expected_delivery_date' => now()->addDays(20),
-                'received_date' => null,
-                'notes' => 'Draft - awaiting approval',
-                'created_by' => $adminUser->id,
-            ]);
+            $po3 = PurchaseOrder::firstOrCreate(
+                ['po_number' => 'PO-2026-0003'],
+                [
+                    'supplier_id' => $createdSuppliers[2]->id,
+                    'store_id' => $mainStore->id,
+                    'status' => 'draft',
+                    'total_amount' => 0,
+                    'shipping_cost' => 0,
+                    'tax_amount' => 0,
+                    'discount_amount' => 0,
+                    'payment_status' => 'unpaid',
+                    'order_date' => now(),
+                    'expected_delivery_date' => now()->addDays(20),
+                    'received_date' => null,
+                    'notes' => 'Draft - awaiting approval',
+                    'created_by' => $adminUser->id,
+                ]
+            );
 
             if ($variants->count() > 2) {
                 $variant3 = $variants[2];
-                PurchaseOrderItem::create([
+                PurchaseOrderItem::firstOrCreate([
                     'purchase_order_id' => $po3->id,
                     'variant_id' => $variant3->id,
+                ],[
                     'quantity' => 200,
                     'received_quantity' => 0,
                     'unit_cost' => 25.00,

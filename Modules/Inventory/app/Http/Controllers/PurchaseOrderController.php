@@ -90,10 +90,34 @@ class PurchaseOrderController extends Controller
     public function updateStatus(Request $request, $id)
     {
         $request->validate([
-            'status' => 'required|in:ordered,partially_received,received,cancelled',
+            'status' => 'nullable|in:ordered,partially_received,received,cancelled',
+            'payment_status' => 'nullable|in:unpaid,partial,paid',
         ]);
-        $result = $this->poService->updateStatus($id, $request->input('status'));
-        return response()->json($result, $result['status'] === 'success' ? 200 : 400);
+
+        if (!$request->filled('status') && !$request->filled('payment_status')) {
+            $result = [
+                'status' => 'error',
+                'message' => 'Status or payment status is required.',
+            ];
+
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json($result, 400);
+            }
+
+            return redirect()->back()->with('error', $result['message']);
+        }
+
+        $result = $this->poService->updateStatus(
+            $id,
+            $request->input('status'),
+            $request->input('payment_status')
+        );
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json($result, $result['status'] === 'success' ? 200 : 400);
+        }
+
+        return redirect()->back()->with($result['status'], $result['message']);
     }
 
     public function searchProducts(Request $request)

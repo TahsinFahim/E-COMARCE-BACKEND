@@ -16,6 +16,7 @@ class CartItem extends Model
     protected $fillable = [
         'cart_id',
         'variant_id',
+        'variant_option_id',
         'quantity',
         'unit_price',
     ];
@@ -32,6 +33,11 @@ class CartItem extends Model
     public function variant()
     {
         return $this->belongsTo(\Modules\Catalog\Models\ProductVariant::class);
+    }
+
+    public function variantOption()
+    {
+        return $this->belongsTo(\Modules\Catalog\Models\VariantOption::class, 'variant_option_id');
     }
 
     public function getLineTotalAttribute(): float

@@ -1,10 +1,8 @@
 <x-guest-layout>
-    <div
-        class="min-h-screen flex flex-col lg:flex-row bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+    <div class="min-h-screen flex flex-col lg:flex-row bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
 
         <!-- Left Side - Branding Section (Hidden on mobile, visible on large screens) -->
-        <div
-            class="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 p-12 flex-col justify-between relative overflow-hidden">
+        <div class="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 p-12 flex-col justify-between relative overflow-hidden">
             <!-- Animated Background Pattern -->
             <div class="absolute inset-0 opacity-5">
                 <div class="absolute inset-0"
@@ -27,12 +25,12 @@
                         class="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center backdrop-blur-sm border border-white/20">
                         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
-                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                         </svg>
                     </div>
                     <div>
-                        <h2 class="text-xl font-semibold text-white tracking-tight">BookMe HRM</h2>
-                        <p class="text-blue-200/70 text-xs">Enterprise Suite</p>
+                        <h2 class="text-xl font-semibold text-white tracking-tight">Shopio</h2>
+                        <p class="text-blue-200/70 text-xs">E-Commerce Platform</p>
                     </div>
                 </div>
 
@@ -41,13 +39,13 @@
                     <div class="relative">
                         <div class="absolute -top-4 -left-2 text-6xl text-white/10 font-serif">"</div>
                         <h1 class="text-4xl lg:text-5xl font-bold text-white leading-tight relative z-10">
-                            Your people,<br>
-                            <span class="bg-gradient-to-r from-blue-200 to-white bg-clip-text text-transparent">one
-                                platform</span>
+                            Shop smarter,<br>
+                            <span class="bg-gradient-to-r from-blue-200 to-white bg-clip-text text-transparent">live
+                                better</span>
                         </h1>
                     </div>
                     <p class="text-blue-100/80 text-base leading-relaxed max-w-sm">
-                        Streamline your HR operations with our comprehensive management system.
+                        Discover amazing products, exclusive deals, and seamless shopping experience all in one place.
                     </p>
                 </div>
 
@@ -55,15 +53,15 @@
                 <div class="mt-12 space-y-3">
                     <div class="flex items-center gap-3 text-blue-100/70 text-sm">
                         <div class="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
-                        <span>Centralized employee database</span>
+                        <span>Curated collections & trending products</span>
                     </div>
                     <div class="flex items-center gap-3 text-blue-100/70 text-sm">
                         <div class="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
-                        <span>Automated payroll & attendance</span>
+                        <span>Secure checkout & fast delivery</span>
                     </div>
                     <div class="flex items-center gap-3 text-blue-100/70 text-sm">
                         <div class="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
-                        <span>Real-time analytics & reports</span>
+                        <span>Exclusive member discounts & rewards</span>
                     </div>
                 </div>
             </div>
@@ -72,12 +70,12 @@
             <div class="relative z-10 mt-12 pt-8 border-t border-white/10">
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <p class="text-2xl font-bold text-white">500+</p>
-                        <p class="text-blue-200/60 text-xs">Enterprise Clients</p>
+                        <p class="text-2xl font-bold text-white">50K+</p>
+                        <p class="text-blue-200/60 text-xs">Happy Customers</p>
                     </div>
                     <div>
-                        <p class="text-2xl font-bold text-white">99.9%</p>
-                        <p class="text-blue-200/60 text-xs">Uptime Guarantee</p>
+                        <p class="text-2xl font-bold text-white">10K+</p>
+                        <p class="text-blue-200/60 text-xs">Products Available</p>
                     </div>
                 </div>
             </div>
@@ -92,11 +90,11 @@
                         class="w-14 h-14 bg-gradient-to-br from-blue-900 to-blue-800 rounded-2xl flex items-center justify-center shadow-lg">
                         <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                         </svg>
                     </div>
                 </div>
-                <h2 class="text-2xl font-bold text-slate-800 dark:text-white">BookMe HRM</h2>
+                <h2 class="text-2xl font-bold text-slate-800 dark:text-white">Shopio</h2>
                 <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Sign in to your account</p>
             </div>
 
@@ -209,8 +207,8 @@
 
             <!-- Footer -->
             <div class="mt-8 text-center text-xs text-slate-400 dark:text-slate-500">
-                <p class="mb-1">Secure access to your HRM dashboard</p>
-                <p>© {{ date('Y') }} BookMe HRM. All rights reserved.</p>
+                <p class="mb-1">Secure access to your Shopio account</p>
+                <p>© {{ date('Y') }} Shopio. All rights reserved.</p>
             </div>
         </div>
     </div>

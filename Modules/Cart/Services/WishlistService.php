@@ -145,4 +145,59 @@ class WishlistService
             ];
         }
     }
+
+    public function getCurrentUserWishlist(): array
+    {
+        try {
+            $userId = auth()->id();
+            if (!$userId) {
+                return ['status' => 'error', 'message' => 'Unauthenticated'];
+            }
+
+            $items = Wishlist::with('product')
+                ->where('user_id', $userId)
+                ->orderByDesc('created_at')
+                ->get();
+
+            return [
+                'status' => 'success',
+                'wishlist' => $items,
+            ];
+        } catch (\Exception $e) {
+            return [
+                'status' => 'error',
+                'message' => 'Error loading wishlist: ' . $e->getMessage(),
+            ];
+        }
+    }
+
+    public function removeWishlistItem(int $userId, int $productId): array
+    {
+        try {
+            return DB::transaction(function () use ($userId, $productId) {
+                $item = Wishlist::where('user_id', $userId)
+                    ->where('product_id', $productId)
+                    ->first();
+
+                if (!$item) {
+                    return [
+                        'status' => 'error',
+                        'message' => 'Wishlist item not found.',
+                    ];
+                }
+
+                $item->delete();
+
+                return [
+                    'status' => 'success',
+                    'message' => 'Wishlist item removed successfully.',
+                ];
+            });
+        } catch (\Exception $e) {
+            return [
+                'status' => 'error',
+                'message' => 'Error removing wishlist item: ' . $e->getMessage(),
+            ];
+        }
+    }
 }

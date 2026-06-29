@@ -11,6 +11,7 @@
     "require": {
         "php": "^8.2",
         "laravel/framework": "^12.0",
+        "laravel/sanctum": "^4.3",
         "laravel/tinker": "^2.10.1",
         "nwidart/laravel-modules": "^12.0",
         "wikimedia/composer-merge-plugin": "^2.1",
@@ -31,7 +32,8 @@
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/",
-            "Modules\\": "Modules/"
+            "Modules\\": "Modules/",
+            "Picqer\\Barcode\\": "vendor/picqer/php-barcode-generator/src"
         },
         "files": [
         "app/Helpers/datatable.php"

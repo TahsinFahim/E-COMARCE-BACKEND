@@ -13,7 +13,7 @@ class Product extends Model
 
     protected $table = 'products';
 
-    protected $fillable = ['brand_id', 'name', 'slug', 'short_description', 'description', 'product_type', 'status', 'visibility', 'seo_title', 'seo_description', 'published_at'];
+    protected $fillable = ['brand_id', 'category_id', 'unit_id', 'size_id', 'tax_rate_id', 'navbar_item_id', 'subnavbar_item_id', 'name', 'slug', 'short_description', 'description', 'product_type', 'status', 'visibility', 'seo_title', 'seo_description', 'published_at'];
 
     protected $casts = [
         'published_at' => 'datetime',
@@ -22,6 +22,21 @@ class Product extends Model
     public function brand()
     {
         return $this->belongsTo(Brand::class);
+    }
+
+    public function unit()
+    {
+        return $this->belongsTo(Unit::class);
+    }
+
+    public function size()
+    {
+        return $this->belongsTo(Size::class);
+    }
+
+    public function taxRate()
+    {
+        return $this->belongsTo(TaxRate::class);
     }
 
     public function variants()
@@ -37,5 +52,20 @@ class Product extends Model
     public function categories()
     {
         return $this->belongsToMany(Category::class, 'product_categories');
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(\Modules\Reviews\Models\ProductReview::class, 'product_id');
+    }
+
+    public function navbarItem()
+    {
+        return $this->belongsTo(\Modules\Frontend\Models\NavbarItem::class, 'navbar_item_id');
+    }
+
+    public function subnavbarItem()
+    {
+        return $this->belongsTo(\Modules\Frontend\Models\SubnavbarItem::class, 'subnavbar_item_id');
     }
 }

@@ -24,4 +24,21 @@ class ProductImage extends Model
     {
         return $this->belongsTo(ProductVariant::class, 'variant_id');
     }
+
+    public function getImageUrlAttribute(?string $value): ?string
+    {
+        if (!$value) {
+            return null;
+        }
+
+        if (str_starts_with($value, 'http://') || str_starts_with($value, 'https://')) {
+            return $value;
+        }
+
+        if (str_starts_with($value, '/storage/')) {
+            return asset($value);
+        }
+
+        return asset('storage/' . ltrim($value, '/'));
+    }
 }

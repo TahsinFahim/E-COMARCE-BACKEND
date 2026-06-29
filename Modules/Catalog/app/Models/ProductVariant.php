@@ -26,4 +26,20 @@ class ProductVariant extends Model
     {
         return $this->hasMany(ProductImage::class, 'variant_id');
     }
+
+    public function inventoryStocks()
+    {
+        return $this->hasMany(\Modules\Inventory\Models\InventoryStock::class, 'variant_id');
+    }
+
+    public function options()
+    {
+        return $this->hasMany(VariantOption::class, 'product_variant_id');
+    }
+
+    public function getStockAttribute(): int
+    {
+        return $this->inventoryStocks
+            ->sum(fn($stock) => max(0, $stock->quantity_on_hand - $stock->quantity_reserved));
+    }
 }

@@ -4,39 +4,100 @@
     const collapseBtn = document.getElementById('collapseBtn');
     const collapseIcon = document.getElementById('collapseIcon');
     const navTooltip = document.getElementById('navTooltip');
-    let collapsed = false;
+    
+    // Restore collapsed state from localStorage
+    let collapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+
+    // Apply initial collapsed state on page load
+    if (collapsed) {
+        sidebar.classList.add('collapsed');
+        sidebar.style.width = '60px';
+    }
 
     /* ---- Collapse toggle ---- */
     collapseBtn.addEventListener('click', () => {
         collapsed = !collapsed;
+        localStorage.setItem('sidebarCollapsed', collapsed);
         if (collapsed) {
             sidebar.classList.add('collapsed');
             sidebar.style.width = '60px';
-            collapseIcon.className = 'fas fa-chevron-right text-[10px]';
         } else {
             sidebar.classList.remove('collapsed');
-            sidebar.style.width = '224px'; // w-56
-            collapseIcon.className = 'fas fa-chevron-left text-[10px]';
+            sidebar.style.width = '224px';
         }
     });
 
-    /* ---- Submenu toggles ---- */
-    document.querySelectorAll('.has-sub').forEach(btn => {
-        btn.addEventListener('click', function () {
-            if (collapsed) return;
-            const subId = this.dataset.sub;
-            const sub = document.getElementById(subId);
-            const isOpen = sub.classList.contains('open');
-
-            // Close all
-            document.querySelectorAll('.submenu').forEach(s => s.classList.remove('open'));
-            document.querySelectorAll('.has-sub').forEach(b => b.classList.remove('open'));
-
-            if (!isOpen) {
-                sub.classList.add('open');
-                this.classList.add('open');
-            }
+    /* ---- Helper: save which parent submenus are open ---- */
+    function saveOpenParents() {
+        const openIds = [];
+        document.querySelectorAll('.has-sub.open').forEach(btn => {
+            if (btn.dataset.sub) openIds.push(btn.dataset.sub);
         });
+        localStorage.setItem('sidebarOpenSubmenus', JSON.stringify(openIds));
+    }
+
+    /* ---- Helper: restore open parents from saved state ---- */
+    function restoreOpenParents() {
+        const saved = localStorage.getItem('sidebarOpenSubmenus');
+        if (!saved) return;
+        try {
+            const openIds = JSON.parse(saved);
+            openIds.forEach(subId => {
+                const sub = document.getElementById(subId);
+                const btn = document.querySelector(`[data-sub="${subId}"]`);
+                if (sub && btn) {
+                    sub.classList.add('open');
+                    btn.classList.add('open');
+                }
+            });
+        } catch(e) {}
+    }
+
+/* ---- Submenu toggles ---- */
+document.querySelectorAll('.has-sub').forEach(btn => {
+    btn.addEventListener('click', function () {
+        if (collapsed) return;
+
+        const subId = this.dataset.sub;
+        const sub = document.getElementById(subId);
+
+        const isOpen = sub.classList.contains('open');
+
+        if (isOpen) {
+            // Close current submenu
+            sub.classList.remove('open');
+            this.classList.remove('open');
+        } else {
+            // Close all others
+            document.querySelectorAll('.submenu').forEach(s => {
+                s.classList.remove('open');
+            });
+
+            document.querySelectorAll('.has-sub').forEach(b => {
+                b.classList.remove('open');
+            });
+
+            // Open selected submenu
+            sub.classList.add('open');
+            this.classList.add('open');
+        }
+
+        saveOpenParents();
+    });
+});
+
+    /* ---- On page load, open submenu: first from saved state, then from active item ---- */
+    restoreOpenParents();
+
+    // Also open any parent that contains an active child (ensures active page is always visible)
+    document.querySelectorAll('.submenu').forEach(sub => {
+        const hasActive = sub.querySelector('a[class*="text-blue-600 bg-blue-50"]');
+        if (hasActive) {
+            sub.classList.add('open');
+            const parentBtn = document.querySelector(`[data-sub="${sub.id}"]`);
+            if (parentBtn) parentBtn.classList.add('open');
+            saveOpenParents(); // immediately save
+        }
     });
 
     /* ---- Tooltip on collapsed ---- */
@@ -56,38 +117,19 @@
     const searchClear = document.getElementById('searchClear');
     const searchEmptyMsg = document.getElementById('searchEmptyMsg');
 
-    // Build a flat list of all searchable nav items
-    // Each entry: { el, label, parentGroup (optional) }
     function getAllNavItems() {
         const items = [];
-        // Top-level single nav items (a.nav-item with data-label)
         document.querySelectorAll('#sideNav a.nav-item[data-label]').forEach(el => {
-            items.push({
-                el,
-                label: el.dataset.label,
-                group: null
-            });
+            items.push({ el, label: el.dataset.label, group: null });
         });
-        // Top-level submenu buttons
         document.querySelectorAll('#sideNav button.has-sub[data-label]').forEach(btn => {
-            items.push({
-                el: btn,
-                label: btn.dataset.label,
-                group: null,
-                subId: btn.dataset.sub
-            });
+            items.push({ el: btn, label: btn.dataset.label, group: null, subId: btn.dataset.sub });
         });
-        // Sub items — each a tag inside .submenu
         document.querySelectorAll('#sideNav .submenu a').forEach(el => {
             const label = el.querySelector('span') ? el.querySelector('span').textContent.trim() : '';
             const subEl = el.closest('.submenu');
             const parentBtn = subEl ? document.querySelector(`[data-sub="${subEl.id}"]`) : null;
-            items.push({
-                el,
-                label,
-                group: subEl,
-                parentBtn
-            });
+            items.push({ el, label, group: subEl, parentBtn });
         });
         return items;
     }
@@ -97,19 +139,27 @@
         clearTimeout(searchDebounce);
         searchDebounce = setTimeout(() => {
             const term = this.value.trim().toLowerCase();
-
-            // Show/hide clear button
             searchClear.classList.toggle('hidden', !term);
 
             if (!term) {
-                resetSearch();
+                resetSearchFilter();
+                // After clearing search, restore the originally active submenus
+                restoreOpenParents();
+                // Also ensure any active child's parent is open
+                document.querySelectorAll('.submenu').forEach(sub => {
+                    const hasActive = sub.querySelector('a[class*="text-blue-600 bg-blue-50"]');
+                    if (hasActive) {
+                        sub.classList.add('open');
+                        const parentBtn = document.querySelector(`[data-sub="${sub.id}"]`);
+                        if (parentBtn) parentBtn.classList.add('open');
+                    }
+                });
                 return;
             }
 
             const allItems = getAllNavItems();
             let anyMatch = false;
 
-            // Hide everything first
             document.querySelectorAll('#sideNav > *').forEach(el => el.style.display = 'none');
             document.querySelectorAll('#sideNav .submenu').forEach(s => {
                 s.classList.remove('open');
@@ -120,27 +170,20 @@
                 if (item.label.toLowerCase().includes(term)) {
                     anyMatch = true;
                     item.el.style.display = '';
-
                     if (item.group && item.parentBtn) {
-                        // Show parent group wrapper div
                         const wrapper = item.parentBtn.closest('div');
                         if (wrapper) wrapper.style.display = '';
                         item.parentBtn.style.display = '';
                         item.group.style.display = '';
                         item.group.classList.add('open');
                     } else if (item.subId) {
-                        // It's a parent submenu button — show it and its sub
                         const wrapper = item.el.closest('div');
                         if (wrapper) wrapper.style.display = '';
                         const sub = document.getElementById(item.subId);
-                        if (sub) {
-                            sub.style.display = '';
-                            sub.classList.add('open');
-                        }
+                        if (sub) { sub.style.display = ''; sub.classList.add('open'); }
                     }
                 }
             });
-
             searchEmptyMsg.classList.toggle('hidden', anyMatch);
         }, 140);
     });
@@ -149,24 +192,31 @@
         searchInput.value = '';
         searchClear.classList.add('hidden');
         searchEmptyMsg.classList.add('hidden');
-        resetSearch();
+        resetSearchFilter();
+        restoreOpenParents();
+        document.querySelectorAll('.submenu').forEach(sub => {
+            const hasActive = sub.querySelector('a[class*="text-blue-600 bg-blue-50"]');
+            if (hasActive) {
+                sub.classList.add('open');
+                const parentBtn = document.querySelector(`[data-sub="${sub.id}"]`);
+                if (parentBtn) parentBtn.classList.add('open');
+            }
+        });
     });
 
-    // Escape key clears
     document.addEventListener('keydown', e => {
         if (e.key === 'Escape' && searchInput.value) {
             searchInput.value = '';
             searchClear.classList.add('hidden');
             searchEmptyMsg.classList.add('hidden');
-            resetSearch();
+            resetSearchFilter();
+            restoreOpenParents();
         }
     });
 
-    function resetSearch() {
-        // Restore all items visibility
+    function resetSearchFilter() {
         document.querySelectorAll('#sideNav > *').forEach(el => el.style.display = '');
         document.querySelectorAll('#sideNav a, #sideNav button').forEach(el => el.style.display = '');
-        // Collapse all submenus back
         document.querySelectorAll('.submenu').forEach(s => {
             s.classList.remove('open');
             s.style.display = '';

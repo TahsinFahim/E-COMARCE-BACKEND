@@ -50,4 +50,26 @@ class WishlistController extends Controller
         $result = $this->wishlistService->deleteWishlist($id);
         return response()->json($result);
     }
+
+    public function apiIndex()
+    {
+        return response()->json($this->wishlistService->getCurrentUserWishlist());
+    }
+
+    public function apiToggle(Request $request)
+    {
+        $request->validate([
+            'product_id' => 'required|integer|exists:products,id',
+        ]);
+
+        $result = $this->wishlistService->toggleWishlist((int) $request->input('product_id'));
+        return response()->json($result);
+    }
+
+    public function apiRemove(int $productId)
+    {
+        $userId = auth()->id();
+        $result = $this->wishlistService->removeWishlistItem($userId, $productId);
+        return response()->json($result);
+    }
 }

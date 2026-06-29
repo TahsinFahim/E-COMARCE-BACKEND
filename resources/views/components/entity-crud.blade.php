@@ -270,5 +270,98 @@
         });
     });
 })();
+
+// Global status update function for Purchase Orders (inline workflow buttons)
+window.updatePoStatus = function(id, status) {
+    const labels = {
+        'ordered': 'Are you sure you want to mark this order as <strong>Ordered</strong>?',
+        'received': 'Are you sure you want to mark this order as <strong>Received</strong>? This will update inventory stock.',
+        'cancelled': 'Are you sure you want to <strong>Cancel</strong> this order?',
+    };
+    Swal.fire({
+        title: 'Update Status',
+        html: labels[status] || 'Update status to ' + status + '?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#4b5563',
+        confirmButtonText: 'Yes, proceed!'
+    }).then(function(result) {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: '/purchase-orders/' + id + '/update-status',
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    status: status
+                },
+                success: function(res) {
+                    if (res.status === 'success') {
+                        Toastify({
+                            text: res.message || 'Status updated successfully!',
+                            duration: 3000,
+                            gravity: 'bottom',
+                            position: 'right',
+                            style: { background: 'linear-gradient(135deg, #16a34a, #4ade80)' }
+                        }).showToast();
+                        if (dtInstance) {
+                            dtInstance.ajax.reload(null, false);
+                        } else {
+                            location.reload();
+                        }
+                    } else {
+                        Swal.fire('Error', res.message || 'Failed to update status', 'error');
+                    }
+                },
+                error: function(xhr) {
+                    let msg = 'Server error';
+                    if (xhr.responseJSON && xhr.responseJSON.message) msg = xhr.responseJSON.message;
+                    Swal.fire('Error', msg, 'error');
+                }
+            });
+        }
+    });
+};
+
+// Global delete function for URL-based action buttons (used by purchase-orders, etc.)
+window.deleteEntity = function(url, label) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: 'This action cannot be undone!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc2626',
+        cancelButtonColor: '#4b5563',
+        confirmButtonText: 'Yes, delete it!'
+    }).then(function(result) {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: { _method: 'DELETE', _token: '{{ csrf_token() }}' },
+                success: function(res) {
+                    if (res.status === 'success') {
+                        Toastify({
+                            text: res.message || 'Deleted successfully',
+                            duration: 3000,
+                            gravity: 'bottom',
+                            position: 'right',
+                            style: { background: 'linear-gradient(135deg, #dc2626, #f87171)' }
+                        }).showToast();
+                        // Reload DataTable if exists
+                        if (dtInstance) {
+                            dtInstance.ajax.reload(null, false);
+                        } else {
+                            location.reload();
+                        }
+                    } else {
+                        Swal.fire('Error', res.message || 'Error deleting', 'error');
+                    }
+                },
+                error: function() { Swal.fire('Error', 'Server communication error.', 'error'); }
+            });
+        }
+    });
+};
 </script>
 @endpush

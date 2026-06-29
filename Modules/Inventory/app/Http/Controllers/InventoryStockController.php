@@ -4,6 +4,7 @@ namespace Modules\Inventory\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Modules\Catalog\Models\ProductVariant;
 use Modules\Inventory\Services\InventoryStockService;
 use Modules\Inventory\Http\Requests\InventoryStockRequest;
 use Modules\Inventory\Models\InventoryLocation;
@@ -20,7 +21,8 @@ class InventoryStockController extends Controller
     public function index()
     {
         $locations = InventoryLocation::with('store')->where('status', 'active')->orderBy('name')->get();
-        return view('inventory::stock.index', compact('locations'));
+        $variants = ProductVariant::with('product')->where('status', 'active')->orderBy('name')->get();
+        return view('inventory::stock.index', compact('locations', 'variants'));
     }
 
     public function dataTable(Request $request)

@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
         $this->call(\Modules\Identity\Database\Seeders\IdentityDatabaseSeeder::class);
         $this->call(\Modules\Store\Database\Seeders\StoreDatabaseSeeder::class);
         $this->call(\Modules\Catalog\Database\Seeders\CatalogDatabaseSeeder::class);
+        $this->call(\Modules\Frontend\Database\Seeders\FrontendDatabaseSeeder::class);
         $this->call(\Modules\Inventory\Database\Seeders\InventoryDatabaseSeeder::class);
         $this->call(\Modules\Cart\Database\Seeders\CartDatabaseSeeder::class);
         $this->call(\Modules\Order\Database\Seeders\OrderDatabaseSeeder::class);

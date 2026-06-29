@@ -141,8 +141,21 @@ class CartService
                 // Find the variant - using direct class reference since import removed
                 $variant = \Modules\Catalog\Models\ProductVariant::findOrFail($data['variant_id']);
 
+                // Calculate price with variant option adjustment if provided
+                $unitPrice = $variant->sale_price;
+                $variantOptionId = $data['variant_option_id'] ?? null;
+                
+                if ($variantOptionId) {
+                    $variantOption = \Modules\Catalog\Models\VariantOption::find($variantOptionId);
+                    if ($variantOption && $variantOption->product_variant_id === $variant->id) {
+                        $unitPrice += $variantOption->price_adjustment;
+                    }
+                }
+
+                // Check for existing item with same variant AND variant_option
                 $existingItem = CartItem::where('cart_id', $cart->id)
                     ->where('variant_id', $data['variant_id'])
+                    ->where('variant_option_id', $variantOptionId)
                     ->first();
 
                 if ($existingItem) {
@@ -154,8 +167,9 @@ class CartService
                     CartItem::create([
                         'cart_id' => $cart->id,
                         'variant_id' => $data['variant_id'],
+                        'variant_option_id' => $variantOptionId,
                         'quantity' => $data['quantity'] ?? 1,
-                        'unit_price' => $variant->sale_price,
+                        'unit_price' => $unitPrice,
                     ]);
                     $message = 'Item added to cart successfully.';
                 }
@@ -281,6 +295,64 @@ class CartService
             return [
                 'status' => 'error',
                 'message' => 'Error removing coupon: ' . $e->getMessage(),
+            ];
+        }
+    }
+
+    public function syncCart(array $data): array
+    {
+        try {
+            return DB::transaction(function () use ($data) {
+                $userId = $data['user_id'];
+                $items = $data['items'] ?? [];
+                
+                // Get or create cart for user
+                $cart = $this->getOrCreateCart($userId);
+                
+                // Use upsert to handle duplicates (update if exists, insert if not)
+                $itemsToUpsert = [];
+                foreach ($items as $itemData) {
+                    $variant = \Modules\Catalog\Models\ProductVariant::findOrFail($itemData['variant_id']);
+                    
+                    // Calculate price with variant option adjustment
+                    $unitPrice = $variant->sale_price;
+                    $variantOptionId = $itemData['variant_option_id'] ?? null;
+                    
+                    if ($variantOptionId) {
+                        $variantOption = \Modules\Catalog\Models\VariantOption::find($variantOptionId);
+                        if ($variantOption && $variantOption->product_variant_id === $variant->id) {
+                            $unitPrice += $variantOption->price_adjustment;
+                        }
+                    }
+                    
+                    $itemsToUpsert[] = [
+                        'cart_id' => $cart->id,
+                        'variant_id' => $itemData['variant_id'],
+                        'variant_option_id' => $variantOptionId,
+                        'quantity' => $itemData['quantity'],
+                        'unit_price' => $unitPrice,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
+                
+                // Upsert items (this will update existing or insert new)
+                \Modules\Cart\Models\CartItem::upsert(
+                    $itemsToUpsert,
+                    ['cart_id', 'variant_id', 'variant_option_id'],
+                    ['quantity', 'unit_price', 'updated_at']
+                );
+                
+                return [
+                    'status' => 'success',
+                    'message' => 'Cart synced successfully.',
+                    'cart' => $cart->fresh()->load('items.variant.product'),
+                ];
+            });
+        } catch (\Exception $e) {
+            return [
+                'status' => 'error',
+                'message' => 'Error syncing cart: ' . $e->getMessage(),
             ];
         }
     }

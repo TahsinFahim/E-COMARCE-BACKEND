@@ -107,6 +107,13 @@
                         <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">Cancel Order</button>
                     </form>
                 @endif
+                @if($purchase_order->payment_status !== 'paid' && $purchase_order->status !== 'cancelled')
+                    <form action="{{ route('purchase-orders.update-status', $purchase_order->id) }}" method="POST" class="inline">
+                        @csrf
+                        <input type="hidden" name="payment_status" value="paid">
+                        <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm hover:bg-indigo-700">Mark as Paid</button>
+                    </form>
+                @endif
             </div>
         @endif
     </div>

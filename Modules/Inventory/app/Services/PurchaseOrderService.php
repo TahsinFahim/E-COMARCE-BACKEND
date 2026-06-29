@@ -55,13 +55,32 @@ class PurchaseOrderService
                 return $po->created_at->format('d M Y H:i');
             })
             ->addColumn('action', function (PurchaseOrder $po) {
-                $actions = '<a href="' . route('purchase-orders.show', $po->id) . '" class="inline-flex items-center p-1.5 text-green-600 hover:bg-green-50 rounded-lg mr-1" title="View"><i class="fas fa-eye text-xs"></i></a>';
-                $actions .= view('components.action-buttons', [
+                $html = '';
+
+                // Quick status workflow buttons (inline)
+                if ($po->status === 'draft') {
+                    $html .= '<button onclick="updatePoStatus(' . $po->id . ', \'ordered\')" class="bg-blue-600 text-white px-2 py-1 rounded text-xs hover:bg-blue-700 mr-1" title="Mark as Ordered"><i class="fas fa-check"></i> Order</button>';
+                }
+                if (in_array($po->status, ['ordered', 'partially_received'])) {
+                    $html .= '<button onclick="updatePoStatus(' . $po->id . ', \'received\')" class="bg-green-600 text-white px-2 py-1 rounded text-xs hover:bg-green-700 mr-1" title="Mark as Received"><i class="fas fa-check-double"></i> Receive</button>';
+                }
+                if (in_array($po->status, ['draft', 'ordered'])) {
+                    $html .= '<button onclick="updatePoStatus(' . $po->id . ', \'cancelled\')" class="bg-red-500 text-white px-2 py-1 rounded text-xs hover:bg-red-600 mr-1" title="Cancel Order"><i class="fas fa-times"></i></button>';
+                }
+                if ($po->payment_status !== 'paid' && $po->status !== 'cancelled') {
+                    $html .= '<button onclick="updatePoStatus(' . $po->id . ', \'paid\', \'payment_status\')" class="bg-indigo-600 text-white px-2 py-1 rounded text-xs hover:bg-indigo-700 mr-1" title="Mark as Paid"><i class="fas fa-dollar-sign"></i> Pay</button>';
+                }
+
+                // Standard action buttons
+                $html .= view('components.action-buttons', [
                     'id' => $po->id,
-                    'edit' => 'purchaseOrderEdit',
-                    'delete' => 'purchaseOrderDelete',
+                    'show' => true,
+                    'showUrl' => route('purchase-orders.show', ':id'),
+                    'editUrl' => route('purchase-orders.edit', ':id'),
+                    'deleteUrl' => route('purchase-orders.destroy', ':id'),
                 ])->render();
-                return $actions;
+
+                return $html;
             })
             ->rawColumns(['action', 'status', 'payment_status'])
             ->make(true);
@@ -155,32 +174,60 @@ class PurchaseOrderService
         }
     }
 
-    public function updateStatus(int $id, string $status): array
+    public function updateStatus(int $id, ?string $status = null, ?string $paymentStatus = null): array
     {
         try {
-            return DB::transaction(function () use ($id, $status) {
+            return DB::transaction(function () use ($id, $status, $paymentStatus) {
                 $po = PurchaseOrder::findOrFail($id);
 
-                $validTransitions = [
-                    'draft' => ['ordered', 'cancelled'],
-                    'ordered' => ['partially_received', 'received', 'cancelled'],
-                    'partially_received' => ['received'],
-                ];
-
-                if (!in_array($status, $validTransitions[$po->status] ?? [])) {
-                    return ['status' => 'error', 'message' => 'Cannot change status from "' . $po->status . '" to "' . $status . '".'];
+                if (!$status && !$paymentStatus) {
+                    return ['status' => 'error', 'message' => 'Nothing to update.'];
                 }
 
-                $po->update(['status' => $status]);
+                if ($status) {
+                    $validTransitions = [
+                        'draft' => ['ordered', 'cancelled'],
+                        'ordered' => ['partially_received', 'received', 'cancelled'],
+                        'partially_received' => ['received'],
+                    ];
 
-                if ($status === 'received') {
-                    $this->processStockUpdate($po);
-                    $po->update(['received_date' => now()->toDateString()]);
+                    if (!in_array($status, $validTransitions[$po->status] ?? [])) {
+                        return ['status' => 'error', 'message' => 'Cannot change status from "' . $po->status . '" to "' . $status . '".'];
+                    }
+
+                    $po->update(['status' => $status]);
+
+                    if ($status === 'received') {
+                        $this->processStockUpdate($po);
+                        $po->update(['received_date' => now()->toDateString()]);
+                    }
+                }
+
+                if ($paymentStatus) {
+                    $validPaymentTransitions = [
+                        'unpaid' => ['partial', 'paid'],
+                        'partial' => ['paid'],
+                        'paid' => [],
+                    ];
+
+                    if (!isset($validPaymentTransitions[$po->payment_status]) || !in_array($paymentStatus, $validPaymentTransitions[$po->payment_status])) {
+                        return ['status' => 'error', 'message' => 'Cannot change payment status from "' . $po->payment_status . '" to "' . $paymentStatus . '".'];
+                    }
+
+                    $po->update(['payment_status' => $paymentStatus]);
+                }
+
+                $message = [];
+                if ($status) {
+                    $message[] = 'Status updated to "' . ucfirst(str_replace('_', ' ', $status)) . '".';
+                }
+                if ($paymentStatus) {
+                    $message[] = 'Payment status updated to "' . ucfirst(str_replace('_', ' ', $paymentStatus)) . '".';
                 }
 
                 return [
                     'status' => 'success',
-                    'message' => 'Status updated to "' . ucfirst(str_replace('_', ' ', $status)) . '".',
+                    'message' => implode(' ', $message),
                     'purchase_order' => $po->fresh()->load(['supplier', 'store', 'items.variant']),
                 ];
             });

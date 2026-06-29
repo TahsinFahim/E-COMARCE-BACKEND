@@ -81,7 +81,10 @@ class CartDatabaseSeeder extends Seeder
         ];
 
         foreach ($coupons as $coupon) {
-            Coupon::create($coupon);
+            Coupon::firstOrCreate(
+                ['code' => $coupon['code']],
+                $coupon
+            );
         }
 
         // Seed carts with items
@@ -151,20 +154,20 @@ class CartDatabaseSeeder extends Seeder
         $products = Product::where('status', 'active')->take(3)->get();
 
         if ($users->count() > 0 && $products->count() > 0) {
-            Wishlist::create([
+            Wishlist::firstOrCreate([
                 'user_id' => $users->first()->id,
                 'product_id' => $products[0]->id,
             ]);
 
             if ($products->count() > 1) {
-                Wishlist::create([
+                Wishlist::firstOrCreate([
                     'user_id' => $users->first()->id,
                     'product_id' => $products[1]->id,
                 ]);
             }
 
             if ($users->count() > 1 && $products->count() > 2) {
-                Wishlist::create([
+                Wishlist::firstOrCreate([
                     'user_id' => $users[1]->id,
                     'product_id' => $products[2]->id,
                 ]);

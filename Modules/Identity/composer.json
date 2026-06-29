@@ -7,6 +7,9 @@
             "email": "support@example.com"
         }
     ],
+    "require": {
+        "laravel/sanctum": "*"
+    },
     "extra": {
         "laravel": {
             "providers": []

@@ -117,6 +117,15 @@ class PosShiftService
         }
     }
 
+    public function getOpenShifts(): array
+    {
+        return PosShift::where('status', 'open')
+            ->with(['register.store', 'user'])
+            ->orderByDesc('opened_at')
+            ->get()
+            ->toArray();
+    }
+
     public function closeShift(int $id, array $data): array
     {
         try {

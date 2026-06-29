@@ -4,9 +4,13 @@ namespace Modules\Catalog\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Modules\Catalog\Models\Size;
+use Modules\Catalog\Models\Unit;
 use Modules\Catalog\Services\ProductService;
 use Modules\Catalog\Http\Requests\StoreProductRequest;
 use Modules\Catalog\Http\Requests\UpdateProductRequest;
+use Modules\Frontend\Models\NavbarItem;
+use Modules\Frontend\Models\SubnavbarItem;
 
 class ProductController extends Controller
 {
@@ -51,7 +55,12 @@ class ProductController extends Controller
     {
         $brands = $this->productService->getBrands();
         $categories = $this->productService->getCategories();
-        return view('catalog::products.create', compact('brands', 'categories'));
+        $units = Unit::where('status', 'active')->orderBy('name')->get();
+        $sizes = Size::where('status', 'active')->orderBy('group_name')->get();
+        $taxRates = \Modules\Catalog\Models\TaxRate::where('status', 'active')->orderBy('name')->get();
+        $navbarItems = NavbarItem::where('status', 'active')->orderBy('sort_order')->orderBy('name')->get();
+        $subnavbarItems = collect();
+        return view('catalog::products.create', compact('brands', 'categories', 'units', 'sizes', 'taxRates', 'navbarItems', 'subnavbarItems'));
     }
 
     public function store(StoreProductRequest $request)
@@ -89,7 +98,14 @@ class ProductController extends Controller
         $product = $result['product'];
         $brands = $this->productService->getBrands();
         $categories = $this->productService->getCategories();
-        return view('catalog::products.edit', compact('product', 'brands', 'categories'));
+        $units = Unit::where('status', 'active')->orderBy('name')->get();
+        $sizes = Size::where('status', 'active')->orderBy('group_name')->get();
+        $taxRates = \Modules\Catalog\Models\TaxRate::where('status', 'active')->orderBy('name')->get();
+        $navbarItems = NavbarItem::where('status', 'active')->orderBy('sort_order')->orderBy('name')->get();
+        $subnavbarItems = $product->navbar_item_id
+            ? SubnavbarItem::where('navbar_item_id', $product->navbar_item_id)->where('status', 'active')->orderBy('sort_order')->orderBy('name')->get()
+            : collect();
+        return view('catalog::products.edit', compact('product', 'brands', 'categories', 'units', 'sizes', 'taxRates', 'navbarItems', 'subnavbarItems'));
     }
 
     public function update(UpdateProductRequest $request, $id)
@@ -114,6 +130,28 @@ class ProductController extends Controller
     {
         $result = $this->productService->deleteProduct($id);
         return response()->json($result);
+    }
+
+    public function search(Request $request)
+    {
+        $query = $request->input('q', '');
+        $categoryId = $request->input('category_id');
+
+        if (empty($query)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Search query is required',
+                'data' => [],
+            ]);
+        }
+
+        $result = $this->productService->searchProducts($query, $categoryId);
+        
+        return response()->json([
+            'success' => $result['status'] === 'success',
+            'message' => $result['message'],
+            'data' => $result['data'],
+        ]);
     }
 }
 

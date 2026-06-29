@@ -3,8 +3,9 @@
         id="category"
         title="Category Catalog"
         icon="fa-solid fa-tags"
-        :columns="['Name','Parent','Status','Created At','Action']"
+        :columns="['Image','Name','Parent','Status','Created At','Action']"
         :dtColumns="[
+            ['data' => 'image_preview', 'orderable' => false, 'searchable' => false],
             ['data' => 'name'],
             ['data' => 'parent'],
             ['data' => 'status'],
@@ -35,7 +36,12 @@
             <x-form-input label="Slug" name="slug" id="category_slug" placeholder="Category Slug" required />
         </div>
         <div class="mb-4">
-            <x-form-input label="Image URL" name="image_url" id="category_image_url" placeholder="Image URL" />
+            <label class="block text-sm font-medium text-gray-700 mb-1" for="category_image">Category Image</label>
+            <input type="file" name="image" id="category_image" accept="image/*"
+                class="block w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
+            <div id="categoryImagePreview" class="hidden mt-2">
+                <img src="" alt="Category preview" class="w-32 h-20 object-cover rounded border" />
+            </div>
         </div>
         <div class="mb-4">
             <x-form-input label="Sort Order" name="sort_order" id="category_sort_order" type="number" placeholder="Sort Order" />
@@ -57,10 +63,17 @@
             $('#category_parent_id').val(data.parent_id || '');
             $('#category_name').val(data.name);
             $('#category_slug').val(data.slug);
-            $('#category_image_url').val(data.image_url || '');
             $('#category_sort_order').val(data.sort_order || '');
             $('#category_status').val(data.status);
             $('#category_description').val(data.description || '');
+
+            // Show image preview if available
+            if (data.category_image_url) {
+                $('#categoryImagePreview img').attr('src', data.category_image_url);
+                $('#categoryImagePreview').removeClass('hidden');
+            } else {
+                $('#categoryImagePreview').addClass('hidden');
+            }
         };
 
         $(document).ready(function() {
@@ -68,6 +81,19 @@
                 if ($('#category_id').val() === '') {
                     let slug = $(this).val().toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
                     $('#category_slug').val(slug);
+                }
+            });
+
+            // Preview image on file select
+            $('#category_image').on('change', function() {
+                var file = this.files[0];
+                if (file) {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        $('#categoryImagePreview img').attr('src', e.target.result);
+                        $('#categoryImagePreview').removeClass('hidden');
+                    };
+                    reader.readAsDataURL(file);
                 }
             });
         });
