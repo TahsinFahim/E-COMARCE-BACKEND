@@ -26,8 +26,6 @@ interface ProductCardProps {
   viewMode?: "grid" | "list";
 }
 
-const isDev = process.env.NODE_ENV === "development";
-
 export default function ProductCard({ product, viewMode = "grid" }: ProductCardProps) {
   const dispatch = useAppDispatch();
   const wishlisted = useAppSelector(selectIsInWishlist(product.id));
@@ -70,7 +68,7 @@ export default function ProductCard({ product, viewMode = "grid" }: ProductCardP
                   fill
                   sizes="128px"
                   className="object-cover group-hover:scale-105 transition-transform duration-300"
-                  unoptimized={isDev}
+                  unoptimized
                 />
               ) : (
                 <div className="flex h-full items-center justify-center text-gray-400">

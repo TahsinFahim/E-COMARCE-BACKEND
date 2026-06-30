@@ -12,8 +12,6 @@ import {
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 
-const isDev = process.env.NODE_ENV === "development";
-
 interface HeroBannerProps {
   banners: Banner[];
 }
@@ -26,7 +24,7 @@ export default function HeroBanner({ banners }: HeroBannerProps) {
       className="w-full bg-gradient-to-br from-green-50 via-white to-green-50"
       aria-label="Promotional banners"
     >
-      <div className="mx-auto max-w-[1400px] px-4 py-6">
+      <div className="mx-auto max-w-[1400px] px-4 ">
         <Carousel
           opts={{
             loop: true,
@@ -56,7 +54,7 @@ export default function HeroBanner({ banners }: HeroBannerProps) {
                       className="object-cover"
                       priority={index === 0}
                       loading={index === 0 ? "eager" : "lazy"}
-                      unoptimized={isDev}
+                      unoptimized
                     />
                   )}
 
@@ -108,8 +106,12 @@ export default function HeroBanner({ banners }: HeroBannerProps) {
                     <div className="flex flex-wrap items-center gap-3 pt-2">
                       {banner.primary_btn && (
                         <Link
-                          href="/shop"
-                          className="inline-flex h-12 items-center gap-2 rounded-full bg-[#1A462F] px-7 text-sm font-semibold text-white shadow-lg shadow-green-500/30 transition-all hover:bg-[var(--color-primary)] hover:shadow-xl"
+                          href={banner.primary_btn_url || '/shop'}
+                          className="inline-flex h-12 items-center gap-2 rounded-full px-7 text-sm font-semibold shadow-lg transition-all hover:opacity-90 hover:shadow-xl"
+                          style={{
+                            backgroundColor: banner.primary_btn_color || '#1A462F',
+                            color: banner.primary_btn_text_color || '#ffffff',
+                          }}
                           aria-label={`Shop now: ${banner.primary_btn}`}
                         >
                           {banner.primary_btn}
@@ -118,8 +120,13 @@ export default function HeroBanner({ banners }: HeroBannerProps) {
                       )}
                       {banner.secondary_btn && (
                         <Link
-                          href="/shop"
-                          className="inline-flex h-12 items-center rounded-full border border-white/40 bg-white px-7 text-sm font-semibold text-gray-800 shadow-lg backdrop-blur-sm transition-all hover:bg-white/20"
+                          href={banner.secondary_btn_url || '/shop'}
+                          className="inline-flex h-12 items-center rounded-full border px-7 text-sm font-semibold shadow-lg backdrop-blur-sm transition-all hover:opacity-90"
+                          style={{
+                            backgroundColor: banner.secondary_btn_color || '#ffffff',
+                            borderColor: banner.secondary_btn_color || 'rgba(255,255,255,0.4)',
+                            color: banner.secondary_btn_text_color || '#1f2937',
+                          }}
                           aria-label={banner.secondary_btn}
                         >
                           {banner.secondary_btn}

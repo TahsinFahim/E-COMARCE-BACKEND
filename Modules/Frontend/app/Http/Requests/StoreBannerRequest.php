@@ -20,8 +20,12 @@ class StoreBannerRequest extends FormRequest
             'smtag' => 'nullable|string|max:255',
             'primary_btn' => 'nullable|string|max:255',
             'primary_btn_url' => 'nullable|string|max:500',
+            'primary_btn_color' => 'nullable|string|max:50',
+            'primary_btn_text_color' => 'nullable|string|max:50',
             'secondary_btn' => 'nullable|string|max:255',
             'secondary_btn_url' => 'nullable|string|max:500',
+            'secondary_btn_color' => 'nullable|string|max:50',
+            'secondary_btn_text_color' => 'nullable|string|max:50',
             'sort_order' => 'nullable|integer|min:0',
             'status' => 'required|in:active,inactive',
         ];

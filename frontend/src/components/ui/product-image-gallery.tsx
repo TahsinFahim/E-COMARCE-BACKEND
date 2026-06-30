@@ -10,8 +10,6 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel";
 
-const isDev = process.env.NODE_ENV === "development";
-
 // ─── Types ───────────────────────────────────────────────────────────────────
 export interface GalleryImage {
   id: number | string;
@@ -114,7 +112,7 @@ function MainImageViewer({ src, alt, priority = true }: MainImageViewerProps) {
         sizes="(max-width: 1024px) 100vw, 600px"
         className="object-contain p-4 pointer-events-none"
         priority={priority}
-        unoptimized={isDev}
+        unoptimized
         draggable={false}
       />
 
@@ -220,7 +218,7 @@ export default function ProductImageGallery({
                     fill
                     sizes="88px"
                     className="object-cover"
-                    unoptimized={isDev}
+                    unoptimized
                   />
                 </button>
               </CarouselItem>

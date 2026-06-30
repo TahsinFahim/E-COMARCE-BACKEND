@@ -6,7 +6,13 @@ export interface Banner {
   title?: string;
   subtitle?: string;
   primary_btn?: string;
+  primary_btn_url?: string;
+  primary_btn_color?: string;
+  primary_btn_text_color?: string;
   secondary_btn?: string;
+  secondary_btn_url?: string;
+  secondary_btn_color?: string;
+  secondary_btn_text_color?: string;
   banner_image?: string;
 }
 

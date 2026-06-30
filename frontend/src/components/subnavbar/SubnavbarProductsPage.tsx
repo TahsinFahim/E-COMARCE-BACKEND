@@ -23,8 +23,6 @@ import {
   fetchWishlistItems,
 } from "@/lib/features/wishlist/wishlistSlice";
 
-const isDev = process.env.NODE_ENV === "development";
-
 interface SubnavbarProductsPageProps {
   slug: string;
   initialData: SubnavbarProductsData;
@@ -67,7 +65,7 @@ export default function SubnavbarProductsPage({
                   fill
                   sizes="(max-width: 768px) 80px, 96px"
                   className="object-cover"
-                  unoptimized={isDev}
+                  unoptimized
                 />
               </div>
             )}

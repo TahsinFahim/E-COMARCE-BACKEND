@@ -4,8 +4,6 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import Image from "next/image";
 import { Package } from "lucide-react";
 import { cn } from "@/lib/utils";
-const isDev = process.env.NODE_ENV === "development";
-
 export interface GalleryImage {
   id: number | string;
   url: string;
@@ -86,7 +84,7 @@ function MainImageViewer({ src, alt, priority = true, height = "h-72" }: { src: 
         sizes="360px"
         className="object-contain p-4 pointer-events-none"
         priority={priority}
-        unoptimized={isDev}
+        unoptimized
         draggable={false}
       />
 
@@ -132,7 +130,7 @@ function ThumbnailButton({ src, alt, isActive, onClick }: { src: string; alt: st
       aria-current={isActive ? "true" : undefined}
       type="button"
     >
-      <Image src={src} alt={alt} fill sizes="70px" className="object-cover" unoptimized={isDev} draggable={false} />
+      <Image src={src} alt={alt} fill sizes="70px" className="object-cover" unoptimized draggable={false} />
     </button>
   );
 }

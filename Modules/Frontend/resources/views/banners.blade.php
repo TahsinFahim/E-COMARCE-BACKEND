@@ -54,10 +54,42 @@
             <x-form-input label="Primary Button URL" name="primary_btn_url" id="banner_primary_btn_url" placeholder="e.g. /shop" />
         </div>
         <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-1" for="banner_primary_btn_color">Primary Button Color</label>
+            <div class="flex items-center gap-3">
+                <input type="color" name="primary_btn_color" id="banner_primary_btn_color" value="#1A462F"
+                    class="h-10 w-16 rounded border border-gray-300 cursor-pointer p-1" />
+                <span id="primary_btn_color_hex" class="text-sm text-gray-500">#1A462F</span>
+            </div>
+        </div>
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-1" for="banner_primary_btn_text_color">Primary Button Text Color</label>
+            <div class="flex items-center gap-3">
+                <input type="color" name="primary_btn_text_color" id="banner_primary_btn_text_color" value="#ffffff"
+                    class="h-10 w-16 rounded border border-gray-300 cursor-pointer p-1" />
+                <span id="primary_btn_text_color_hex" class="text-sm text-gray-500">#ffffff</span>
+            </div>
+        </div>
+        <div class="mb-4">
             <x-form-input label="Secondary Button Text" name="secondary_btn" id="banner_secondary_btn" placeholder="e.g. Learn More" />
         </div>
         <div class="mb-4">
             <x-form-input label="Secondary Button URL" name="secondary_btn_url" id="banner_secondary_btn_url" placeholder="e.g. /about" />
+        </div>
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-1" for="banner_secondary_btn_color">Secondary Button Color</label>
+            <div class="flex items-center gap-3">
+                <input type="color" name="secondary_btn_color" id="banner_secondary_btn_color" value="#ffffff"
+                    class="h-10 w-16 rounded border border-gray-300 cursor-pointer p-1" />
+                <span id="secondary_btn_color_hex" class="text-sm text-gray-500">#ffffff</span>
+            </div>
+        </div>
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-1" for="banner_secondary_btn_text_color">Secondary Button Text Color</label>
+            <div class="flex items-center gap-3">
+                <input type="color" name="secondary_btn_text_color" id="banner_secondary_btn_text_color" value="#1f2937"
+                    class="h-10 w-16 rounded border border-gray-300 cursor-pointer p-1" />
+                <span id="secondary_btn_text_color_hex" class="text-sm text-gray-500">#1f2937</span>
+            </div>
         </div>
         <div class="mb-4">
             <x-form-input label="Sort Order" name="sort_order" id="banner_sort_order" type="number" value="0" />
@@ -79,8 +111,12 @@
             $('#banner_smtag').val(data.smtag || '');
             $('#banner_primary_btn').val(data.primary_btn || '');
             $('#banner_primary_btn_url').val(data.primary_btn_url || '');
+            $('#banner_primary_btn_color').val(data.primary_btn_color || '#1A462F');
+            $('#banner_primary_btn_text_color').val(data.primary_btn_text_color || '#ffffff');
             $('#banner_secondary_btn').val(data.secondary_btn || '');
             $('#banner_secondary_btn_url').val(data.secondary_btn_url || '');
+            $('#banner_secondary_btn_color').val(data.secondary_btn_color || '#ffffff');
+            $('#banner_secondary_btn_text_color').val(data.secondary_btn_text_color || '#1f2937');
             $('#banner_sort_order').val(data.sort_order || 0);
             $('#banner_status').val(data.status);
 

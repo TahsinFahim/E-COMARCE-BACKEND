@@ -2,8 +2,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { type CtaSection as CtaSectionType } from "@/services/home.service";
 
-const isDev = process.env.NODE_ENV === "development";
-
 interface CtaSectionProps {
   cta: CtaSectionType;
 }
@@ -26,7 +24,7 @@ export default function CtaSection({ cta }: CtaSectionProps) {
                   fill
                   sizes="80px"
                   className="object-cover"
-                  unoptimized={isDev}
+                  unoptimized
                 />
               </div>
             )}

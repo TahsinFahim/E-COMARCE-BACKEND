@@ -30,7 +30,7 @@ export default function CategorySection({ category, products }: CategorySectionP
                   fill
                   sizes="48px"
                   className="object-cover"
-                    unoptimized
+                  unoptimized
                 />
               </div>
             )}

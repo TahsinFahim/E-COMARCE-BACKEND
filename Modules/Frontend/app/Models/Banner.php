@@ -20,8 +20,12 @@ class Banner extends Model
         'smtag',
         'primary_btn',
         'primary_btn_url',
+        'primary_btn_color',
+        'primary_btn_text_color',
         'secondary_btn',
         'secondary_btn_url',
+        'secondary_btn_color',
+        'secondary_btn_text_color',
         'sort_order',
         'status',
     ];
